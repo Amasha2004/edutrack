@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Teacher Dashboard</h2>
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>👤 {{ profile.full_name }}</h5>
+                <p class="text-muted">{{ profile.employee_number }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h5>My Courses</h5>
+                <h2>{{ courses|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h4 class="mt-4">My Courses</h4>
+<table class="table table-bordered mt-2">
+    <thead class="table-dark">
+        <tr><th>Course</th><th>Code</th><th>Credits</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+        {% for course in courses %}
+        <tr>
+            <td>{{ course.course_name }}</td>
+            <td>{{ course.course_code }}</td>
+            <td>{{ course.credits }}</td>
+            <td>
+                <a href="{{ url_for('teacher.attendance', course_id=course.id) }}" class="btn btn-sm btn-success">Attendance</a>
+                <a href="{{ url_for('teacher.grades', course_id=course.id) }}" class="btn btn-sm btn-warning">Grades</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

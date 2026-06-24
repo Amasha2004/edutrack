@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">My Grades</h2>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>Course</th><th>Assignment</th><th>Midterm</th><th>Final</th><th>Total</th><th>Grade</th></tr>
+    </thead>
+    <tbody>
+        {% for e in enrollments %}
+        <tr>
+            <td>{{ e.course.course_name }}</td>
+            {% if e.grade %}
+            <td>{{ e.grade.assignment }}</td>
+            <td>{{ e.grade.midterm }}</td>
+            <td>{{ e.grade.final_exam }}</td>
+            <td>{{ "%.1f"|format(e.grade.total) }}</td>
+            <td><span class="badge bg-primary">{{ e.grade.letter_grade }}</span></td>
+            {% else %}
+            <td colspan="5" class="text-muted">Not graded yet</td>
+            {% endif %}
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center">No grades yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}

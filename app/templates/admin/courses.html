@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Manage Courses</h2>
+    <a href="{{ url_for('admin.add_course') }}" class="btn btn-warning">+ Add Course</a>
+</div>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>Code</th><th>Name</th><th>Credits</th><th>Semester</th><th>Teacher</th></tr>
+    </thead>
+    <tbody>
+        {% for c in courses %}
+        <tr>
+            <td>{{ c.course_code }}</td>
+            <td>{{ c.course_name }}</td>
+            <td>{{ c.credits }}</td>
+            <td>{{ c.semester }}</td>
+            <td>{{ c.teacher.full_name if c.teacher else 'Unassigned' }}</td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center">No courses yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}

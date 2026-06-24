@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Manage Departments</h2>
+<div class="card shadow col-md-5 mb-4">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Department Name</label>
+                <input type="text" name="name" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-info w-100">Add Department</button>
+        </form>
+    </div>
+</div>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>#</th><th>Department Name</th></tr>
+    </thead>
+    <tbody>
+        {% for d in departments %}
+        <tr><td>{{ loop.index }}</td><td>{{ d.name }}</td></tr>
+        {% else %}
+        <tr><td colspan="2" class="text-center">No departments yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}

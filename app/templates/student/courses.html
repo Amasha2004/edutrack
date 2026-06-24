@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Available Courses</h2>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>Code</th><th>Name</th><th>Credits</th><th>Teacher</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+        {% for c in courses %}
+        <tr>
+            <td>{{ c.course_code }}</td>
+            <td>{{ c.course_name }}</td>
+            <td>{{ c.credits }}</td>
+            <td>{{ c.teacher.full_name if c.teacher else 'TBA' }}</td>
+            <td>
+                <a href="{{ url_for('student.enroll', course_id=c.id) }}" class="btn btn-sm btn-primary">Enroll</a>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5" class="text-center">No available courses.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}

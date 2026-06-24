@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Admin Dashboard</h2>
+<div class="row g-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h5>Total Students</h5>
+                <h2>{{ total_students }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body">
+                <h5>Total Teachers</h5>
+                <h2>{{ total_teachers }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning shadow">
+            <div class="card-body">
+                <h5>Total Courses</h5>
+                <h2>{{ total_courses }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info shadow">
+            <div class="card-body">
+                <h5>Departments</h5>
+                <h2>{{ total_departments }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('admin.students') }}" class="btn btn-outline-primary">Manage Students</a>
+    <a href="{{ url_for('admin.teachers') }}" class="btn btn-outline-success">Manage Teachers</a>
+    <a href="{{ url_for('admin.courses') }}" class="btn btn-outline-warning">Manage Courses</a>
+    <a href="{{ url_for('admin.departments') }}" class="btn btn-outline-info">Manage Departments</a>
+</div>
+{% endblock %}

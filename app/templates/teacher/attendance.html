@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Mark Attendance — {{ course.course_name }}</h2>
+<form method="POST">
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr><th>Student</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% for e in enrollments %}
+            <tr>
+                <td>{{ e.student.full_name }}</td>
+                <td>
+                    <select name="status_{{ e.id }}" class="form-select form-select-sm">
+                        <option value="present">Present</option>
+                        <option value="absent">Absent</option>
+                        <option value="late">Late</option>
+                    </select>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="2" class="text-center">No students enrolled.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if enrollments %}
+    <button type="submit" class="btn btn-success">Save Attendance</button>
+    {% endif %}
+</form>
+<a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary mt-2">← Back</a>
+{% endblock %}

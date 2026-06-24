@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">My Attendance</h2>
+<table class="table table-bordered">
+    <thead class="table-dark">
+        <tr><th>Course</th><th>Total Classes</th><th>Present</th><th>Attendance %</th></tr>
+    </thead>
+    <tbody>
+        {% for a in attendance_data %}
+        <tr>
+            <td>{{ a.course }}</td>
+            <td>{{ a.total }}</td>
+            <td>{{ a.present }}</td>
+            <td>
+                <span class="badge bg-{{ 'success' if a.percentage >= 75 else 'danger' }}">
+                    {{ a.percentage }}%
+                </span>
+            </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" class="text-center">No attendance records yet.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{{ url_for('student.dashboard') }}" class="btn btn-secondary">← Back</a>
+{% endblock %}

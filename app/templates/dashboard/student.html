@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Student Dashboard</h2>
+<div class="row g-4">
+    <div class="col-md-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <h5>👤 {{ profile.full_name }}</h5>
+                <p class="text-muted">{{ profile.student_number }}</p>
+                <p>Year Level: {{ profile.year_level }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success shadow">
+            <div class="card-body">
+                <h5>Cumulative GPA</h5>
+                <h2>{{ gpa }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-primary shadow">
+            <div class="card-body">
+                <h5>Enrolled Courses</h5>
+                <h2>{{ enrollments|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2 flex-wrap">
+    <a href="{{ url_for('student.courses') }}" class="btn btn-outline-primary">Browse Courses</a>
+    <a href="{{ url_for('student.attendance') }}" class="btn btn-outline-success">My Attendance</a>
+    <a href="{{ url_for('student.grades') }}" class="btn btn-outline-warning">My Grades</a>
+</div>
+
+<h4 class="mt-4">My Enrolled Courses</h4>
+<table class="table table-bordered mt-2">
+    <thead class="table-dark">
+        <tr><th>Course</th><th>Code</th><th>Credits</th><th>Grade</th></tr>
+    </thead>
+    <tbody>
+        {% for e in enrollments %}
+        <tr>
+            <td>{{ e.course.course_name }}</td>
+            <td>{{ e.course.course_code }}</td>
+            <td>{{ e.course.credits }}</td>
+            <td>{{ e.grade.letter_grade if e.grade else 'N/A' }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

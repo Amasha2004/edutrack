@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Add Student</h2>
+<div class="card shadow col-md-6">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Student Number</label>
+                <input type="text" name="student_number" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Year Level</label>
+                <input type="number" name="year_level" class="form-control" min="1" max="5">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Department</label>
+                <select name="department_id" class="form-select">
+                    <option value="">-- Select --</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}">{{ d.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Add Student</button>
+        </form>
+    </div>
+</div>
+<a href="{{ url_for('admin.students') }}" class="btn btn-secondary mt-3">← Back</a>
+{% endblock %}

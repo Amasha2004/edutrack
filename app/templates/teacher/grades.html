@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Enter Grades — {{ course.course_name }}</h2>
+<form method="POST">
+    <table class="table table-bordered">
+        <thead class="table-dark">
+            <tr><th>Student</th><th>Assignment (20%)</th><th>Midterm (30%)</th><th>Final (50%)</th></tr>
+        </thead>
+        <tbody>
+            {% for e in enrollments %}
+            <tr>
+                <td>{{ e.student.full_name }}</td>
+                <td><input type="number" name="assignment_{{ e.id }}" class="form-control form-control-sm"
+                           min="0" max="100" value="{{ e.grade.assignment if e.grade else 0 }}"></td>
+                <td><input type="number" name="midterm_{{ e.id }}" class="form-control form-control-sm"
+                           min="0" max="100" value="{{ e.grade.midterm if e.grade else 0 }}"></td>
+                <td><input type="number" name="final_{{ e.id }}" class="form-control form-control-sm"
+                           min="0" max="100" value="{{ e.grade.final_exam if e.grade else 0 }}"></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4" class="text-center">No students enrolled.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if enrollments %}
+    <button type="submit" class="btn btn-warning">Save Grades</button>
+    {% endif %}
+</form>
+<a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary mt-2">← Back</a>
+{% endblock %}
