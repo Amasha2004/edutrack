@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">Edit Teacher</h2>
+<div class="card shadow col-md-6">
+    <div class="card-body">
+        <form method="POST">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control"
+                       value="{{ user.username }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control"
+                       value="{{ user.email }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">New Password <small class="text-muted">(leave blank to keep current)</small></label>
+                <input type="password" name="password" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" class="form-control"
+                       value="{{ teacher.full_name }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Employee Number</label>
+                <input type="text" name="employee_number" class="form-control"
+                       value="{{ teacher.employee_number }}" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Department</label>
+                <select name="department_id" class="form-select">
+                    <option value="">-- Select --</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}"
+                        {{ 'selected' if d.id == teacher.department_id }}>
+                        {{ d.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Save Changes</button>
+        </form>
+    </div>
+</div>
+<a href="{{ url_for('admin.teachers') }}" class="btn btn-secondary mt-3">← Back</a>
+{% endblock %}

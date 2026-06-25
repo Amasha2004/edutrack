@@ -6,7 +6,7 @@
         <div class="card text-white bg-primary shadow">
             <div class="card-body">
                 <h5>Total Students</h5>
-                <h2>{{ total_students }}</h2>
+                <h2 class="counter" data-target="{{ total_students }}">0</h2>
             </div>
         </div>
     </div>
@@ -14,7 +14,7 @@
         <div class="card text-white bg-success shadow">
             <div class="card-body">
                 <h5>Total Teachers</h5>
-                <h2>{{ total_teachers }}</h2>
+                <h2 class="counter" data-target="{{ total_teachers }}">0</h2>
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
         <div class="card text-white bg-warning shadow">
             <div class="card-body">
                 <h5>Total Courses</h5>
-                <h2>{{ total_courses }}</h2>
+                <h2 class="counter" data-target="{{ total_courses }}">0</h2>
             </div>
         </div>
     </div>
@@ -30,7 +30,7 @@
         <div class="card text-white bg-info shadow">
             <div class="card-body">
                 <h5>Departments</h5>
-                <h2>{{ total_departments }}</h2>
+                <h2 class="counter" data-target="{{ total_departments }}">0</h2>
             </div>
         </div>
     </div>
@@ -42,4 +42,25 @@
     <a href="{{ url_for('admin.courses') }}" class="btn btn-outline-warning">Manage Courses</a>
     <a href="{{ url_for('admin.departments') }}" class="btn btn-outline-info">Manage Departments</a>
 </div>
+
+<script>
+document.querySelectorAll('.counter').forEach(counter => {
+    const target = parseInt(counter.getAttribute('data-target'));
+    counter.textContent = '0';
+    if (target === 0) return;
+
+    let current = 0;
+    const duration = 2000;
+    const increment = target / (duration / 20);
+
+    const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(timer);
+        }
+        counter.textContent = Math.floor(current);
+    }, 20);
+});
+</script>
 {% endblock %}

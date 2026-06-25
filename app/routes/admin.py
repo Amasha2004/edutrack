@@ -161,3 +161,63 @@ def departments():
         flash('Department added!', 'success')
     all_departments = Department.query.all()
     return render_template('admin/departments.html', departments=all_departments)
+
+@admin.route('/students/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_student(id):
+    student = Student.query.get_or_404(id)
+    departments = Department.query.all()
+
+    if request.method == 'POST':
+        student.full_name = request.form.get('full_name')
+        student.student_number = request.form.get('student_number')
+        student.year_level = request.form.get('year_level')
+        student.department_id = request.form.get('department_id')
+
+        # Update login email
+        user = User.query.get(student.user_id)
+        user.email = request.form.get('email')
+        user.username = request.form.get('username')
+
+        # Only update password if a new one was entered
+        new_password = request.form.get('password')
+        if new_password:
+            user.set_password(new_password)
+
+        db.session.commit()
+        flash('Student updated successfully!', 'success')
+        return redirect(url_for('admin.students'))
+
+    user = User.query.get(student.user_id)
+    return render_template('admin/edit_student.html',
+                           student=student, user=user, departments=departments)
+
+
+@admin.route('/teachers/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
+@admin_required
+def edit_teacher(id):
+    teacher = Teacher.query.get_or_404(id)
+    departments = Department.query.all()
+
+    if request.method == 'POST':
+        teacher.full_name = request.form.get('full_name')
+        teacher.employee_number = request.form.get('employee_number')
+        teacher.department_id = request.form.get('department_id')
+
+        user = User.query.get(teacher.user_id)
+        user.email = request.form.get('email')
+        user.username = request.form.get('username')
+
+        new_password = request.form.get('password')
+        if new_password:
+            user.set_password(new_password)
+
+        db.session.commit()
+        flash('Teacher updated successfully!', 'success')
+        return redirect(url_for('admin.teachers'))
+
+    user = User.query.get(teacher.user_id)
+    return render_template('admin/edit_teacher.html',
+                           teacher=teacher, user=user, departments=departments)
