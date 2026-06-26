@@ -45,6 +45,9 @@
             <a href="{{ url_for('admin.departments') }}" class="nav-item {{ 'active' if request.endpoint == 'admin.departments' }}">
                 <i class="bi bi-building"></i> Departments
             </a>
+            <a href="{{ url_for('admin.analytics') }}" class="nav-item {{ 'active' if request.endpoint == 'admin.analytics' }}">
+                <i class="bi bi-bar-chart-line"></i> Analytics
+            </a>
 
             {% elif current_user.role == 'student' %}
             <a href="{{ url_for('student.dashboard') }}" class="nav-item {{ 'active' if request.endpoint == 'student.dashboard' }}">
@@ -84,11 +87,6 @@
             <div class="topbar-title">
                 {% if request.endpoint %}
                     {{ request.endpoint.split('.')[-1].replace('_', ' ').title() }}
-                {% endif %}
-            </div>
-            <div class="topbar-title">
-                {% if request.endpoint %}
-                {{ request.endpoint.split('.')[-1].replace('_', ' ').title() }}
                 {% endif %}
             </div>
             <div class="ms-auto">

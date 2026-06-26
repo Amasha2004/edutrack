@@ -5,7 +5,12 @@ from app.models import User
 
 auth = Blueprint('auth', __name__)
 
-@auth.route('/', methods=['GET', 'POST'])
+@auth.route('/')
+def index():
+    if current_user.is_authenticated:
+        return redirect(url_for(f'{current_user.role}.dashboard'))
+    return render_template('index.html')
+
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:

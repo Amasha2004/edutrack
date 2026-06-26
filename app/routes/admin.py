@@ -221,3 +221,40 @@ def edit_teacher(id):
     user = User.query.get(teacher.user_id)
     return render_template('admin/edit_teacher.html',
                            teacher=teacher, user=user, departments=departments)
+
+@admin.route('/analytics')
+@login_required
+@admin_required
+def analytics():
+    from app.models import Grade, Enrollment, Attendance, Course
+
+    # Grade distribution across all students
+    grades = Grade.query.all()
+    grade_counts = {'A': 0, 'B': 0, 'C': 0, 'D': 0, 'F': 0}
+    for g in grades:
+        grade_counts[g.letter_grade] += 1
+
+    # Enrollment per course
+    courses = Course.query.all()
+    course_names = [c.course_code for c in courses]
+    course_enrollments = [Enrollment.query.filter_by(course_id=c.id).count() for c in courses]
+
+    # Attendance overview
+    total_attendance = Attendance.query.count()
+    present = Attendance.query.filter_by(status='present').count()
+    absent = Attendance.query.filter_by(status='absent').count()
+    late = Attendance.query.filter_by(status='late').count()
+
+    # Students per department
+    from app.models import Department
+    departments = Department.query.all()
+    dept_names = [d.name for d in departments]
+    dept_counts = [Student.query.filter_by(department_id=d.id).count() for d in departments]
+
+    return render_template('admin/analytics.html',
+        grade_counts=grade_counts,
+        course_names=course_names,
+        course_enrollments=course_enrollments,
+        present=present, absent=absent, late=late,
+        dept_names=dept_names, dept_counts=dept_counts
+    )

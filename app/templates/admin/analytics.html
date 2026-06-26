@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2 class="mb-4">📊 Analytics</h2>
+
+<div class="row g-4">
+
+    <!-- Grade Distribution -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <h5 class="mb-3">Grade Distribution</h5>
+            <canvas id="gradeChart" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- Attendance Overview -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <h5 class="mb-3">Attendance Overview</h5>
+            <canvas id="attendanceChart" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- Enrollments per Course -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <h5 class="mb-3">Enrollments per Course</h5>
+            <canvas id="enrollmentChart" height="250"></canvas>
+        </div>
+    </div>
+
+    <!-- Students per Department -->
+    <div class="col-md-6">
+        <div class="card shadow p-4">
+            <h5 class="mb-3">Students per Department</h5>
+            <canvas id="deptChart" height="250"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary mt-4">← Back</a>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const isDark = document.body.classList.contains('dark-mode');
+const textColor = isDark ? '#e2e8f0' : '#2d3748';
+
+// Grade Distribution — Doughnut
+new Chart(document.getElementById('gradeChart'), {
+    type: 'doughnut',
+    data: {
+        labels: ['A', 'B', 'C', 'D', 'F'],
+        datasets: [{
+            data: [
+                {{ grade_counts['A'] }},
+                {{ grade_counts['B'] }},
+                {{ grade_counts['C'] }},
+                {{ grade_counts['D'] }},
+                {{ grade_counts['F'] }}
+            ],
+            backgroundColor: ['#2ecc71', '#3498db', '#f39c12', '#e67e22', '#e74c3c'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: textColor } }
+        }
+    }
+});
+
+// Attendance — Pie
+new Chart(document.getElementById('attendanceChart'), {
+    type: 'pie',
+    data: {
+        labels: ['Present', 'Absent', 'Late'],
+        datasets: [{
+            data: [{{ present }}, {{ absent }}, {{ late }}],
+            backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12'],
+            borderWidth: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'bottom', labels: { color: textColor } }
+        }
+    }
+});
+
+// Enrollments per Course — Bar
+new Chart(document.getElementById('enrollmentChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ course_names | tojson }},
+        datasets: [{
+            label: 'Students Enrolled',
+            data: {{ course_enrollments | tojson }},
+            backgroundColor: '#1a73e8',
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { ticks: { color: textColor }, grid: { display: false } }
+        }
+    }
+});
+
+// Students per Department — Bar
+new Chart(document.getElementById('deptChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ dept_names | tojson }},
+        datasets: [{
+            label: 'Students',
+            data: {{ dept_counts | tojson }},
+            backgroundColor: '#7c3aed',
+            borderRadius: 8
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: 'rgba(0,0,0,0.05)' } },
+            x: { ticks: { color: textColor }, grid: { display: false } }
+        }
+    }
+});
+</script>
+{% endblock %}
