@@ -3,6 +3,12 @@ from flask_login import login_required, current_user
 from app import db, bcrypt
 from app.models import User, Student, Teacher, Course, Department, Enrollment
 
+def log_activity(message, icon='📌'):
+    from app.models import ActivityLog
+    entry = ActivityLog(message=message, icon=icon)
+    db.session.add(entry)
+    db.session.commit()
+
 admin = Blueprint('admin', __name__, url_prefix='/admin')
 
 def admin_required(f):
@@ -19,21 +25,26 @@ def admin_required(f):
 @login_required
 @admin_required
 def dashboard():
+    from app.models import ActivityLog
     total_students = Student.query.count()
     total_teachers = Teacher.query.count()
     total_courses = Course.query.count()
     total_departments = Department.query.count()
+    recent_activity = ActivityLog.query.order_by(
+        ActivityLog.created_at.desc()).limit(8).all()
     return render_template('dashboard/admin.html',
                            total_students=total_students,
                            total_teachers=total_teachers,
                            total_courses=total_courses,
-                           total_departments=total_departments)
+                           total_departments=total_departments,
+                           recent_activity=recent_activity)
 
 @admin.route('/students')
 @login_required
 @admin_required
 def students():
-    all_students = Student.query.all()
+    page = request.args.get('page', 1, type=int)
+    all_students = Student.query.paginate(page=page, per_page=5, error_out=False)
     return render_template('admin/students.html', students=all_students)
 
 @admin.route('/students/add', methods=['GET', 'POST'])
@@ -64,7 +75,13 @@ def add_student():
                           department_id=department_id, year_level=year_level)
         db.session.add(student)
         db.session.commit()
-        flash('Student added successfully!', 'success')
+        log_activity(f'New student {full_name} was added', '👨‍🎓')
+        from app.utils import send_welcome_student
+        sent = send_welcome_student(email, full_name, username, password)
+        if sent:
+            flash('Student added and welcome email sent!', 'success')
+        else:
+            flash('Student added successfully!', 'success')
         return redirect(url_for('admin.students'))
 
     return render_template('admin/add_student.html', departments=departments)
@@ -78,6 +95,7 @@ def delete_student(id):
     db.session.delete(student)
     db.session.delete(user)
     db.session.commit()
+    log_activity(f'Student {student.full_name} was deleted', '🗑️')
     flash('Student deleted.', 'success')
     return redirect(url_for('admin.students'))
 
@@ -85,7 +103,8 @@ def delete_student(id):
 @login_required
 @admin_required
 def teachers():
-    all_teachers = Teacher.query.all()
+    page = request.args.get('page', 1, type=int)
+    all_teachers = Teacher.query.paginate(page=page, per_page=5, error_out=False)
     return render_template('admin/teachers.html', teachers=all_teachers)
 
 @admin.route('/teachers/add', methods=['GET', 'POST'])
@@ -115,6 +134,7 @@ def add_teacher():
                           department_id=department_id)
         db.session.add(teacher)
         db.session.commit()
+        log_activity(f'New teacher {full_name} was added', '👩‍🏫')
         flash('Teacher added successfully!', 'success')
         return redirect(url_for('admin.teachers'))
 
@@ -144,6 +164,7 @@ def add_course():
         )
         db.session.add(course)
         db.session.commit()
+        log_activity(f'New course {request.form.get("course_name")} was added', '📚')
         flash('Course added successfully!', 'success')
         return redirect(url_for('admin.courses'))
 
@@ -186,6 +207,7 @@ def edit_student(id):
             user.set_password(new_password)
 
         db.session.commit()
+        log_activity(f'Student {student.full_name} was updated', '✏️')
         flash('Student updated successfully!', 'success')
         return redirect(url_for('admin.students'))
 
@@ -215,6 +237,7 @@ def edit_teacher(id):
             user.set_password(new_password)
 
         db.session.commit()
+        log_activity(f'Teacher {teacher.full_name} was updated', '✏️')
         flash('Teacher updated successfully!', 'success')
         return redirect(url_for('admin.teachers'))
 

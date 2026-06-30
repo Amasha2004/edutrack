@@ -459,3 +459,14 @@ body.dark-mode .content-area { background: #1a202c; }
 
 .dark-toggle:hover { transform: rotate(20deg) scale(1.1); }
 body.dark-mode .dark-toggle { border-color: #4a5568; }
+
+/* ── Activity Log ── */
+.activity-item {
+    transition: background 0.2s ease;
+}
+.activity-item:hover { background: #f8fafc; }
+.activity-icon { font-size: 1.4rem; width: 40px; text-align: center; }
+.activity-message { font-weight: 500; color: #2d3748; font-size: 0.95rem; }
+.activity-time { font-size: 0.8rem; }
+body.dark-mode .activity-item:hover { background: #4a5568; }
+body.dark-mode .activity-message { color: #e2e8f0; }

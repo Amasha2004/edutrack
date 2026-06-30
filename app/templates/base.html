@@ -65,6 +65,9 @@
             <a href="{{ url_for('student.download_transcript') }}" class="nav-item">
                 <i class="bi bi-file-earmark-pdf"></i> Transcript
             </a>
+            <a href="{{ url_for('student.upload_photo') }}" class="nav-item {{ 'active' if request.endpoint == 'student.upload_photo' }}">
+                <i class="bi bi-camera"></i> Profile Photo
+            </a>
 
             {% elif current_user.role == 'teacher' %}
             <a href="{{ url_for('teacher.dashboard') }}" class="nav-item {{ 'active' if request.endpoint == 'teacher.dashboard' }}">

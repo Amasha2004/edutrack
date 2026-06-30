@@ -1,3 +1,6 @@
+import os
+from werkzeug.utils import secure_filename
+from PIL import Image
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -201,3 +204,62 @@ def download_transcript():
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = f'attachment; filename=transcript_{profile.student_number}.pdf'
     return response
+
+@student.route('/unenroll/<int:course_id>')
+@login_required
+@student_required
+def unenroll(course_id):
+    profile = Student.query.filter_by(user_id=current_user.id).first()
+    enrollment = Enrollment.query.filter_by(
+        student_id=profile.id, course_id=course_id).first()
+
+    if not enrollment:
+        flash('You are not enrolled in this course.', 'warning')
+        return redirect(url_for('student.dashboard'))
+
+    # Delete related grades and attendance first
+    from app.models import Grade, Attendance
+    Grade.query.filter_by(enrollment_id=enrollment.id).delete()
+    Attendance.query.filter_by(enrollment_id=enrollment.id).delete()
+    db.session.delete(enrollment)
+    db.session.commit()
+    flash('Successfully unenrolled from the course.', 'success')
+    return redirect(url_for('student.dashboard'))
+
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@student.route('/upload-photo', methods=['GET', 'POST'])
+@login_required
+@student_required
+def upload_photo():
+    profile = Student.query.filter_by(user_id=current_user.id).first()
+
+    if request.method == 'POST':
+        if 'photo' not in request.files:
+            flash('No file selected.', 'danger')
+            return redirect(request.url)
+
+        file = request.files['photo']
+        if file.filename == '':
+            flash('No file selected.', 'danger')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(f'student_{profile.id}_{file.filename}')
+            upload_path = os.path.join('app', 'static', 'uploads', filename)
+
+            img = Image.open(file)
+            img = img.resize((200, 200))
+            img.save(upload_path)
+
+            profile.photo = filename
+            db.session.commit()
+            flash('Photo updated successfully!', 'success')
+            return redirect(url_for('student.dashboard'))
+        else:
+            flash('Only PNG, JPG, GIF files allowed.', 'danger')
+
+    return render_template('student/upload_photo.html', profile=profile)

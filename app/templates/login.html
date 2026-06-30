@@ -40,8 +40,14 @@
         <span id="btnText">Sign In →</span>
         <span id="btnSpinner" class="spinner hidden"></span>
       </button>
-    </form>
-  </div>
+      <div class="text-center mt-3">
+        <a href="{{ url_for('auth.forgot_password') }}"
+        style="color:rgba(255,255,255,0.6); font-size:0.9rem;">
+        Forgot your password?
+      </a>
+    </div>
+  </form>
+</div>
 
   <div class="success-overlay" id="successOverlay">
     <div class="success-box">

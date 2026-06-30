@@ -43,6 +43,31 @@
     <a href="{{ url_for('admin.departments') }}" class="btn btn-outline-info">Manage Departments</a>
 </div>
 
+<h4 class="mt-5 mb-3">🕐 Recent Activity</h4>
+{% if recent_activity %}
+<div class="card shadow">
+    <div class="card-body p-0">
+        {% for log in recent_activity %}
+        <div class="activity-item d-flex align-items-center gap-3 p-3 {{ 'border-bottom' if not loop.last }}">
+            <div class="activity-icon">{{ log.icon }}</div>
+            <div class="flex-grow-1">
+                <div class="activity-message">{{ log.message }}</div>
+                <div class="activity-time text-muted small">
+                    {{ log.created_at.strftime('%b %d, %Y at %I:%M %p') }}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="card shadow">
+    <div class="card-body text-center text-muted py-4">
+        No activity yet. Start adding students, teachers or courses!
+    </div>
+</div>
+{% endif %}
+
 <script>
 document.querySelectorAll('.counter').forEach(counter => {
     const target = parseInt(counter.getAttribute('data-target'));

@@ -1,31 +1,69 @@
 {% extends 'base.html' %}
 {% block content %}
-<h2 class="mb-4">Mark Attendance — {{ course.course_name }}</h2>
-<form method="POST">
-    <table class="table table-bordered">
-        <thead class="table-dark">
-            <tr><th>Student</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-            {% for e in enrollments %}
-            <tr>
-                <td>{{ e.student.full_name }}</td>
-                <td>
-                    <select name="status_{{ e.id }}" class="form-select form-select-sm">
-                        <option value="present">Present</option>
-                        <option value="absent">Absent</option>
-                        <option value="late">Late</option>
-                    </select>
-                </td>
-            </tr>
-            {% else %}
-            <tr><td colspan="2" class="text-center">No students enrolled.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% if enrollments %}
-    <button type="submit" class="btn btn-success">Save Attendance</button>
-    {% endif %}
-</form>
-<a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary mt-2">← Back</a>
+<div class="d-flex justify-content-between align-items-center mb-4 no-print">
+    <h2>Mark Attendance — {{ course.course_name }}</h2>
+    <button onclick="window.print()" class="btn btn-outline-dark">🖨️ Print Sheet</button>
+</div>
+
+<div id="printArea">
+    <div class="print-header d-none d-print-block mb-4">
+        <h3>🎓 EduTrack — Attendance Sheet</h3>
+        <p><b>Course:</b> {{ course.course_name }} ({{ course.course_code }})</p>
+        <p><b>Date:</b> <span id="todayDate"></span></p>
+        <hr>
+    </div>
+
+    <form method="POST" class="no-print-form">
+        <table class="table table-bordered">
+            <thead class="table-dark">
+                <tr><th>#</th><th>Student</th><th>Status</th><th class="d-none d-print-table-cell">Signature</th></tr>
+            </thead>
+            <tbody>
+                {% for e in enrollments %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ e.student.full_name }}</td>
+                    <td class="no-print">
+                        <select name="status_{{ e.id }}" class="form-select form-select-sm">
+                            <option value="present">Present</option>
+                            <option value="absent">Absent</option>
+                            <option value="late">Late</option>
+                        </select>
+                    </td>
+                    <td class="d-none d-print-table-cell" style="width:200px;"></td>
+                </tr>
+                {% else %}
+                <tr><td colspan="4" class="text-center">No students enrolled.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% if enrollments %}
+        <button type="submit" class="btn btn-success no-print">Save Attendance</button>
+        {% endif %}
+    </form>
+</div>
+
+<a href="{{ url_for('teacher.dashboard') }}" class="btn btn-secondary mt-2 no-print">← Back</a>
+
+<style>
+@media print {
+    .no-print, .sidebar, .topbar, .no-print-form button { display: none !important; }
+    .main-content { margin-left: 0 !important; }
+    .content-area { padding: 0 !important; }
+    body { background: white !important; }
+    .table { box-shadow: none !important; }
+    .table thead th { background: #333 !important; -webkit-print-color-adjust: exact; }
+}
+.d-print-table-cell { display: none; }
+@media print {
+    .d-print-table-cell { display: table-cell !important; }
+    .d-print-block { display: block !important; }
+}
+</style>
+
+<script>
+document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric'
+});
+</script>
 {% endblock %}

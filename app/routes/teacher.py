@@ -60,6 +60,24 @@ def grades(course_id):
             grade.midterm = float(request.form.get(f'midterm_{e.id}', 0))
             grade.final_exam = float(request.form.get(f'final_{e.id}', 0))
         db.session.commit()
+        # Send grade notifications
+        from app.utils import send_grade_notification
+        for e in enrollments:
+            if e.grade and e.student.user.email:
+                # Calculate student GPA
+                student_enrollments = Enrollment.query.filter_by(student_id=e.student.id).all()
+                total_points = sum(en.grade.grade_points * en.course.credits for en in student_enrollments if en.grade)
+                total_credits = sum(en.course.credits for en in student_enrollments if en.grade)
+                gpa = round(total_points / total_credits, 2) if total_credits > 0 else 0.0
+                send_grade_notification(
+                    e.student.user.email,
+                    e.student.full_name,
+                    course.course_name,
+                    e.grade.letter_grade,
+                    gpa
+                )
+        flash('Grades saved and students notified!', 'success')
+        return redirect(url_for('teacher.dashboard'))
         flash('Grades saved!', 'success')
         return redirect(url_for('teacher.dashboard'))
 

@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
-    role = db.Column(db.String(10), nullable=False)  # 'admin', 'teacher', 'student'
+    role = db.Column(db.String(10), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     student_profile = db.relationship('Student', backref='user', uselist=False)
@@ -43,6 +43,7 @@ class Student(db.Model):
     student_number = db.Column(db.String(20), unique=True, nullable=False)
     full_name = db.Column(db.String(100), nullable=False)
     year_level = db.Column(db.Integer)
+    photo = db.Column(db.String(200), default='default.png')
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     enrollments = db.relationship('Enrollment', backref='student', lazy=True)
@@ -88,7 +89,7 @@ class Attendance(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     enrollment_id = db.Column(db.Integer, db.ForeignKey('enrollments.id'), nullable=False)
     date = db.Column(db.Date, nullable=False)
-    status = db.Column(db.String(10), nullable=False)  # 'present', 'absent', 'late'
+    status = db.Column(db.String(10), nullable=False)
 
 
 class Grade(db.Model):
@@ -116,3 +117,11 @@ class Grade(db.Model):
     def grade_points(self):
         lg = self.letter_grade
         return {'A': 4.0, 'B': 3.0, 'C': 2.0, 'D': 1.0, 'F': 0.0}.get(lg, 0.0)
+
+
+class ActivityLog(db.Model):
+    __tablename__ = 'activity_logs'
+    id = db.Column(db.Integer, primary_key=True)
+    message = db.Column(db.String(255), nullable=False)
+    icon = db.Column(db.String(10), default='📌')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
